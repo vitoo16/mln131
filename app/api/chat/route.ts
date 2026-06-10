@@ -5,6 +5,7 @@ import path from 'node:path'
 // Gemini's answer back as Server-Sent Events. The API key stays on the server.
 
 export const runtime = 'nodejs'
+export const maxDuration = 60
 
 const EMBEDDING_MODEL = 'gemini-embedding-2-preview'
 const CHAT_API_BASE = 'https://api.shopaikey.com/v1/models/gemini-3.5-flash'
@@ -29,15 +30,17 @@ function getApiKey() {
 let embeddingsCache: EmbeddingItem[] | null = null
 async function loadEmbeddings(): Promise<EmbeddingItem[]> {
   if (embeddingsCache) return embeddingsCache
+  let loaded: EmbeddingItem[] = []
   try {
     const file = path.join(process.cwd(), 'data', 'embeddings.json')
     const raw = await fs.readFile(file, 'utf8')
     const data = JSON.parse(raw)
-    embeddingsCache = Array.isArray(data) ? data : data.embeddings ?? []
+    loaded = Array.isArray(data) ? data : data.embeddings ?? []
   } catch {
-    embeddingsCache = []
+    loaded = []
   }
-  return embeddingsCache
+  embeddingsCache = loaded
+  return loaded
 }
 
 function cosineSimilarity(a: number[], b: number[]): number {
