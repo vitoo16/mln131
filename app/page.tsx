@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/site-nav'
 import { HeroSection } from '@/components/hero-section'
 import { FunctionsSection } from '@/components/functions-section'
 import { FoundationsSection } from '@/components/foundations-section'
+import { FamilyBuildingGame } from '@/components/family-building-game'
 import { ConclusionSection } from '@/components/conclusion-section'
 
 export default function Page() {
@@ -15,6 +16,7 @@ export default function Page() {
         <HeroSection />
         <FunctionsSection />
         <FoundationsSection />
+        <FamilyBuildingGame />
         <ConclusionSection />
       </main>
     </SmoothScroll>
