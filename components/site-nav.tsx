@@ -6,6 +6,7 @@ const LINKS = [
   { id: 'hero', label: 'Khái niệm' },
   { id: 'functions', label: 'Chức năng' },
   { id: 'foundations', label: 'Cơ sở' },
+  { id: 'mini-game', label: 'Ôn tập' },
   { id: 'conclusion', label: 'Kết luận' },
 ] as const
 
