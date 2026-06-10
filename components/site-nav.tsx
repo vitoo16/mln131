@@ -87,9 +87,12 @@ export function SiteNav() {
           })}
         </nav>
 
-        <span className="hidden font-mono text-xs uppercase tracking-[0.2em] text-white/50 md:block">
-          CNXH Khoa học
-        </span>
+        <a
+          href="/chat"
+          className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition-colors hover:border-white/60 hover:text-white"
+        >
+          Hỏi đáp AI
+        </a>
       </div>
     </header>
   )

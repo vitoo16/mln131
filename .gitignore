@@ -13,3 +13,10 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+
+# Tài liệu nguồn (chỉ cần để chạy ingest tại máy, KHÔNG cần khi deploy):
+# - PDF giáo trình: dung lượng lớn + bản quyền, không đưa lên repo.
+*.pdf
+
+# Lưu ý: data/embeddings.json VẪN được push vì server (/api/chat) đọc file
+# này lúc chạy — bỏ nó ra thì RAG sẽ không hoạt động trên Vercel.
