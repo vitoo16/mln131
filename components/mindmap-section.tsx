@@ -10,15 +10,7 @@ import {
 } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import {
-  ChevronRight,
-  ChevronDown,
-  Maximize2,
-  Minimize2,
-  RotateCcw,
-  X,
-  BookOpen,
-} from "lucide-react";
+import { ChevronRight, ChevronDown, X, BookOpen } from "lucide-react";
 
 type MindMapNode = {
   id: string;
@@ -453,6 +445,7 @@ export function MindMapSection() {
 
   return (
     <section
+      id="mindmap"
       ref={sectionRef}
       className={`relative w-full border-b border-border bg-cream px-4 py-20 md:px-10 md:py-28 ${isFullscreen ? "fixed inset-0 z-[60] overflow-auto bg-cream" : ""}`}
     >
@@ -684,15 +677,6 @@ function HorizontalMindMap({
               </div>
             )}
           </div>
-          {hasChildren && (
-            <span className="ml-auto">
-              {isCollapsed ? (
-                <ChevronRight className="h-3.5 w-3.5 text-foreground/30" />
-              ) : (
-                <ChevronDown className="h-3.5 w-3.5 text-foreground/30" />
-              )}
-            </span>
-          )}
         </button>
 
         {/* Children — horizontal row */}
