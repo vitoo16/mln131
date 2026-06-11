@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import {
@@ -243,9 +243,7 @@ export function MindMapSection() {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<MindMapNode | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const branchRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const dragInfo = useRef({
     active: false,
@@ -286,18 +284,34 @@ export function MindMapSection() {
     setCollapsed(new Set(ids));
   }, []);
 
+  // Scroll-triggered entrance — matches Functions/Foundations pattern
   useGSAP(() => {
-    if (!rootRef.current || !canvasRef.current) return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const canvas = section.querySelector(".mindmap-canvas") as HTMLElement | null;
+    const rootEl = section.querySelector(".mindmap-node-root") as HTMLElement | null;
+    const branchEls = section.querySelectorAll<HTMLElement>(".mindmap-node-branch");
+
+    if (!canvas) return;
+
     const ctx = gsap.context(() => {
-      gsap.set(canvasRef.current, { opacity: 0, y: 30 });
-      gsap.to(canvasRef.current, {
+      // Canvas fade-up
+      gsap.set(canvas, { opacity: 0, y: 30 });
+      gsap.to(canvas, {
         opacity: 1,
         y: 0,
         duration: 0.8,
         ease: "power3.out",
+        scrollTrigger: {
+          trigger: canvas,
+          start: "top 88%",
+          end: "top 50%",
+          scrub: 1,
+        },
       });
 
-      const rootEl = rootRef.current!.querySelector(".mindmap-node-root");
+      // Root node scale reveal
       if (rootEl) {
         gsap.set(rootEl, { opacity: 0, scale: 0.85, y: 20 });
         gsap.to(rootEl, {
@@ -307,26 +321,61 @@ export function MindMapSection() {
           duration: 0.7,
           ease: "back.out(1.4)",
           delay: 0.15,
+          scrollTrigger: {
+            trigger: canvas,
+            start: "top 88%",
+            end: "top 50%",
+            scrub: 1,
+          },
         });
       }
 
-      const branchEls = branchRefs.current.filter(Boolean);
+      // Branches slide from left with stagger
+      if (branchEls.length) {
+        gsap.set(branchEls, { opacity: 0, x: -30 });
+        gsap.to(branchEls, {
+          opacity: 1,
+          x: 0,
+          duration: 0.6,
+          ease: "power3.out",
+          stagger: 0.08,
+          delay: 0.35,
+          scrollTrigger: {
+            trigger: canvas,
+            start: "top 88%",
+            end: "top 50%",
+            scrub: 1,
+          },
+        });
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, { scope: sectionRef });
+
+  // Re-animate branches when collapsed state changes
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const branchEls = section.querySelectorAll<HTMLElement>(".mindmap-node-branch");
+    if (!branchEls.length) return;
+
+    const ctx = gsap.context(() => {
       gsap.set(branchEls, { opacity: 0, x: -30 });
       gsap.to(branchEls, {
         opacity: 1,
         x: 0,
-        duration: 0.6,
+        duration: 0.5,
         ease: "power3.out",
-        stagger: 0.08,
-        delay: 0.35,
+        stagger: 0.06,
       });
-    }, rootRef);
+    }, section);
+
     return () => ctx.revert();
   }, [collapsed]);
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = e.currentTarget;
     dragInfo.current = {
       active: true,
       startX: e.pageX,
@@ -346,7 +395,7 @@ export function MindMapSection() {
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
         info.moved = true;
       }
-      const canvas = canvasRef.current;
+      const canvas = document.querySelector(".mindmap-canvas") as HTMLElement | null;
       if (canvas) {
         canvas.scrollLeft = info.scrollStartX - dx;
         canvas.scrollTop = info.scrollStartY - dy;
@@ -384,6 +433,7 @@ export function MindMapSection() {
 
   return (
     <section
+      ref={sectionRef}
       className={`relative w-full border-b border-border bg-cream px-4 py-20 md:px-10 md:py-28 ${isFullscreen ? "fixed inset-0 z-[60] overflow-auto bg-cream" : ""}`}
     >
       <div
@@ -392,7 +442,7 @@ export function MindMapSection() {
         {/* Header */}
         <div className="mb-10 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.3em]  text-[#9B3A2F]">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#9B3A2F]">
               Tổng quan
             </p>
             <h2 className="mt-3 font-serif text-3xl leading-[0.95] tracking-tight text-ink md:text-5xl">
@@ -411,25 +461,47 @@ export function MindMapSection() {
               <span className="h-2.5 w-px bg-border" aria-hidden="true" />
               <span>{stats.depth} cấp</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={expandAll}
+                className="rounded border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-foreground/50 transition-colors hover:border-foreground/30 hover:text-foreground/80"
+                aria-label="Mở rộng tất cả"
+              >
+                <Maximize2 className="h-3 w-3" />
+              </button>
+              <button
+                type="button"
+                onClick={collapseAll}
+                className="rounded border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-foreground/50 transition-colors hover:border-foreground/30 hover:text-foreground/80"
+                aria-label="Thu gọn tất cả"
+              >
+                <Minimize2 className="h-3 w-3" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFullscreen((f) => !f)}
+                className="rounded border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-foreground/50 transition-colors hover:border-foreground/30 hover:text-foreground/80"
+                aria-label={isFullscreen ? "Thoát toàn màn hình" : "Toàn màn hình"}
+              >
+                {isFullscreen ? (
+                  <Minimize2 className="h-3 w-3" />
+                ) : (
+                  <Maximize2 className="h-3 w-3" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Canvas */}
-        <div ref={rootRef}>
-          <div
-            ref={canvasRef}
-            className={`mindmap-canvas ${dragInfo.current.moved ? "cursor-grabbing" : ""}`}
-            style={{ minHeight: 420, cursor: "grab" }}
-            onMouseDown={handleCanvasMouseDown}
-          >
-            <HorizontalMindMap
-              node={DATA}
-              collapsed={collapsed}
-              toggle={toggle}
-              branchRefs={branchRefs}
-              onNodeClick={openPopup}
-            />
-          </div>
+        <div className="mindmap-canvas" style={{ minHeight: 420, cursor: "grab" }} onMouseDown={handleCanvasMouseDown}>
+          <HorizontalMindMap
+            node={DATA}
+            collapsed={collapsed}
+            toggle={toggle}
+            onNodeClick={openPopup}
+          />
         </div>
       </div>
 
@@ -475,7 +547,6 @@ export function MindMapSection() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-
             <div className="mindmap-popup-body">
               {selectedNode.content && (
                 <div className="flex gap-3">
@@ -524,21 +595,18 @@ function HorizontalMindMap({
   collapsed,
   toggle,
   depth = 0,
-  branchRefs,
   onNodeClick,
 }: {
   node: MindMapNode;
   collapsed: Set<string>;
   toggle: (id: string) => void;
   depth?: number;
-  branchRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
   onNodeClick: (node: MindMapNode) => void;
 }) {
   const isCollapsed = collapsed.has(node.id);
   const hasChildren = node.children && node.children.length > 0;
   const isRoot = depth === 0;
   const isLevel1 = depth === 1;
-  const isLeaf = !hasChildren;
 
   if (isRoot) {
     return (
@@ -571,7 +639,6 @@ function HorizontalMindMap({
                 collapsed={collapsed}
                 toggle={toggle}
                 depth={depth + 1}
-                branchRefs={branchRefs}
                 onNodeClick={onNodeClick}
               />
             ))}
@@ -593,16 +660,10 @@ function HorizontalMindMap({
 
   if (isLevel1) {
     return (
-      <div
-        ref={(el) => {
-          branchRefs.current[depth] = el;
-        }}
-        className="mindmap-node-branch"
-        style={{
-          borderColor: `${node.color}40`,
-          backgroundColor: `${node.color}10`,
-        }}
-      >
+      <div className="mindmap-node-branch" style={{
+        borderColor: `${node.color}40`,
+        backgroundColor: `${node.color}10`,
+      }}>
         <button
           type="button"
           onClick={() => onNodeClick(node)}
@@ -626,6 +687,15 @@ function HorizontalMindMap({
               </div>
             )}
           </div>
+          {hasChildren && (
+            <span className="ml-auto">
+              {isCollapsed ? (
+                <ChevronRight className="h-3.5 w-3.5 text-foreground/30" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5 text-foreground/30" />
+              )}
+            </span>
+          )}
         </button>
 
         {/* Children — horizontal row */}

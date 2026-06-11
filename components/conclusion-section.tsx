@@ -54,10 +54,10 @@ export function ConclusionSection() {
       }
 
       // Kinetic typography on heading lines
-      const lines = heading.querySelectorAll('[data-line]')
-      if (lines.length) {
-        gsap.set(lines, { yPercent: 120, opacity: 0, rotateX: -60 })
-        gsap.to(lines, {
+      const lineInners = heading.querySelectorAll('[data-line-inner]')
+      if (lineInners.length) {
+        gsap.set(lineInners, { yPercent: 120, opacity: 0, rotateX: -60 })
+        gsap.to(lineInners, {
           yPercent: 0,
           opacity: 1,
           rotateX: 0,
@@ -147,7 +147,7 @@ export function ConclusionSection() {
         >
           {headingLines.map((line, i) => (
             <span key={i} data-line className="block overflow-hidden">
-              {line}
+              <span data-line-inner className="block">{line}</span>
             </span>
           ))}
         </h2>
@@ -157,21 +157,20 @@ export function ConclusionSection() {
           className="mx-auto mt-16 max-w-3xl columns-1 gap-12 md:columns-2 [&>p]:mb-6 [&>p]:break-inside-avoid"
         >
           <p className="text-base leading-[1.75] text-[#F9F6F0]/90">
-            Gia đình có vai trò đặc biệt quan trọng trong thời kỳ quá độ lên chủ
-            nghĩa xã hội. Gia đình không chỉ là nơi duy trì nòi giống mà còn là
-            môi trường giáo dục, hình thành nhân cách và truyền giữ các giá trị
-            văn hóa dân tộc.
+            Gia đình có vai trò đặc biệt quan trọng trong thời kỳ quá độ lên chủ nghĩa xã hội.
+            Gia đình không chỉ là nơi duy trì nòi giống mà còn là môi trường giáo dục, hình thành
+            nhân cách và truyền giữ các giá trị văn hóa dân tộc.
           </p>
           <p className="text-base leading-[1.75] text-[#F9F6F0]/90">
-            Việc xây dựng gia đình no ấm, bình đẳng, tiến bộ và hạnh phúc là
-            nhiệm vụ quan trọng của toàn xã hội. Để thực hiện mục tiêu đó cần
-            kết hợp giữa phát triển kinh tế, hoàn thiện pháp luật, nâng cao đời
-            sống văn hóa và phát huy trách nhiệm của mỗi cá nhân trong gia đình.
+            Việc xây dựng gia đình no ấm, bình đẳng, tiến bộ và hạnh phúc là nhiệm vụ quan trọng
+            của toàn xã hội. Để thực hiện mục tiêu đó cần kết hợp giữa phát triển kinh tế, hoàn
+            thiện pháp luật, nâng cao đời sống văn hóa và phát huy trách nhiệm của mỗi cá nhân
+            trong gia đình.
           </p>
           <p className="text-base leading-[1.75] text-[#F9F6F0]/90">
-            Trong bối cảnh hội nhập và phát triển hiện nay, việc giữ gìn và phát
-            huy các giá trị tốt đẹp của gia đình Việt Nam có ý nghĩa đặc biệt
-            quan trọng đối với sự phát triển bền vững của đất nước.
+            Trong bối cảnh hội nhập và phát triển hiện nay, việc giữ gìn và phát huy các giá trị
+            tốt đẹp của gia đình Việt Nam có ý nghĩa đặc biệt quan trọng đối với sự phát triển
+            bền vững của đất nước.
           </p>
         </div>
 
@@ -181,10 +180,7 @@ export function ConclusionSection() {
           className="mx-auto mt-16 h-px w-24 origin-center bg-[#F9F6F0]/30"
         />
 
-        <footer
-          ref={footerRef}
-          className="relative mt-16 flex flex-col items-center gap-2"
-        >
+        <footer ref={footerRef} className="relative mt-16 flex flex-col items-center gap-2">
           <p className="font-serif text-2xl italic">Chương 7 — Gia đình</p>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#F9F6F0]/70">
             Chủ nghĩa xã hội khoa học
