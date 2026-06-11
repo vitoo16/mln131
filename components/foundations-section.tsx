@@ -222,7 +222,7 @@ export function FoundationsSection() {
             </h2>
           </div>
           <span className="font-serif text-7xl italic text-[#1C1C1C]/15 md:text-8xl">
-            05
+            II
           </span>
         </div>
 

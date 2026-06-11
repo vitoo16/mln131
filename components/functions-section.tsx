@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger)
 const FUNCTIONS = [
   {
     num: '01',
-    label: 'a',
+    label: '01',
     title: 'Tái sản xuất con người',
     body: [
       'Đây là chức năng cơ bản của gia đình nhằm duy trì nòi giống và tái sản xuất sức lao động cho xã hội.',
@@ -19,7 +19,7 @@ const FUNCTIONS = [
   },
   {
     num: '02',
-    label: 'b',
+    label: '02',
     title: 'Kinh tế & tổ chức tiêu dùng',
     body: [
       'Gia đình là đơn vị kinh tế cơ sở, tham gia lao động sản xuất, tạo ra của cải vật chất và tổ chức tiêu dùng nhằm đáp ứng nhu cầu của các thành viên.',
@@ -28,7 +28,7 @@ const FUNCTIONS = [
   },
   {
     num: '03',
-    label: 'c',
+    label: '03',
     title: 'Giáo dục',
     image: '/education-bw.png',
     imageAlt: 'Người mẹ dạy con nhỏ học bài bên bàn',
@@ -39,7 +39,7 @@ const FUNCTIONS = [
   },
   {
     num: '04',
-    label: 'd',
+    label: '04',
     title: 'Thỏa mãn nhu cầu tâm sinh lý & tình cảm',
     body: [
       'Gia đình là nơi đem lại sự yêu thương, chăm sóc và chia sẻ giữa các thành viên — môi trường giúp con người cân bằng tâm lý, vượt qua khó khăn và phát triển toàn diện.',
@@ -197,7 +197,7 @@ export function FunctionsSection() {
         <div ref={sidebarRef} className="relative border-b border-white/10 md:border-b-0 md:border-r">
           <div className="flex min-h-[40dvh] flex-col justify-between px-6 py-16 md:h-dvh md:px-10 md:py-12">
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#9B3A2F]">
-              § 3
+              
             </span>
             <div className="sidebar-title">
               <h2 className="text-balance-auto font-serif text-5xl leading-[0.9] tracking-tight md:text-6xl">

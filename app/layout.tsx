@@ -45,9 +45,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
+    <html suppressHydrationWarning
       lang="vi"
-      className={`${beVietnam.variable} ${lora.variable} bg-[#F9F6F0] noise-overlay`}
+      className={`${beVietnam.variable} ${lora.variable} bg-cream noise-overlay`}
     >
       <body className="font-sans antialiased">
         {children}
