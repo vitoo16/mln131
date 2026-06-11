@@ -20,3 +20,4 @@ node_modules
 
 # Lưu ý: data/embeddings.json VẪN được push vì server (/api/chat) đọc file
 # này lúc chạy — bỏ nó ra thì RAG sẽ không hoạt động trên Vercel.
+.vercel
